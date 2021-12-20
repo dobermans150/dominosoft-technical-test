@@ -18,16 +18,19 @@
     "importHelpers": true,
     "target": "es2017",
     "module": "es2020",
-    "lib": ["es2020", "dom"]
+    "lib": ["es2020", "dom"],
+    "paths": {
+      "@material/*": ["src/app/material/*"],
+      "@core/*": ["src/app/core/*"],
+      "@models/*": ["src/app/core/models/*"],
+      "@services/*": ["src/app/core/services/*"],
+      "@shared/*": ["src/app/shared/*"],
+      "@utils/*": ["src/app/utils/*"]
+
+      /* "@ui/*": ["src/app/shared/ui/*"] */
+    }
   },
-  "paths": {
-    "@material": ["src/app/material/*"],
-    "@core": ["src/app/core/*"],
-    "@models": ["src/app/core/models/*"],
-    "@services": ["src/app/core/services/*"],
-    "@shared": ["src/app/shared/*"],
-    "@ui": ["src/app/shared/ui/*"]
-  },
+
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,

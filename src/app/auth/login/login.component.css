@@ -1,0 +1,30 @@
+.login_page {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login_container {
+  width: 70%;
+  height: 40%;
+  padding: 10px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.login_container_title {
+  text-align: center;
+  font-size: 30px;
+}
+
+.login_input {
+  width: 100%;
+  font-size: 16px;
+}
+
+.longin_actions {
+  display: flex;
+  justify-content: flex-end;
+}
