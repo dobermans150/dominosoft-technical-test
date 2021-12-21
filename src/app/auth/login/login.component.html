@@ -4,25 +4,68 @@
       >Autentificarse</mat-card-title
     >
 
-    <mat-card-content>
-      <div class="row">
-        <mat-form-field class="login_input">
-          <mat-label>Nombre de Usuario</mat-label>
-          <input matInput type="text" />
-        </mat-form-field>
-      </div>
+    <form [formGroup]="form" (ngSubmit)="signIn($event)">
+      <mat-card-content>
+        <div class="row">
+          <mat-form-field class="login_input">
+            <mat-label>Nombre de Usuario</mat-label>
+            <input
+              matInput
+              type="text"
+              formControlName="username"
+              autocomplete="off"
+            />
 
-      <div class="row ">
-        <mat-form-field class="login_input">
-          <mat-label>Contraseña</mat-label>
-          <input matInput type="password" />
-        </mat-form-field>
-      </div>
-    </mat-card-content>
+            <!-- Validations -->
+            <ng-container
+              *ngIf="userNameField.touched || userNameField.dirty"
+              class=""
+            >
+              <ng-container *ngFor="let validation of validations.username">
+                <mat-error *ngIf="userNameField.hasError(validation.type)">
+                  {{ validation.msg }}
+                </mat-error>
+              </ng-container>
+            </ng-container>
+          </mat-form-field>
+        </div>
 
-    <mat-card-actions class="longin_actions">
+        <div class="row">
+          <mat-form-field class="login_input">
+            <mat-label>Contraseña</mat-label>
+            <input
+              matInput
+              type="password "
+              formControlName="password"
+              autocomplete="off"
+            />
+
+            <!-- Validations -->
+            <ng-container
+              *ngIf="passwordField.touched || passwordField.dirty"
+              class=""
+            >
+              <ng-container *ngFor="let validation of validations.password">
+                <mat-error *ngIf="passwordField.hasError(validation.type)">
+                  {{ validation.msg }}
+                </mat-error>
+              </ng-container>
+            </ng-container>
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+
       <!-- Buttons -->
-      <button mat-flat-button color="primary">Iniciar sesion</button>
-    </mat-card-actions>
+      <mat-card-actions class="longin_actions">
+        <button
+          [disabled]="form.invalid"
+          type="submit"
+          mat-flat-button
+          color="primary"
+        >
+          Iniciar sesion
+        </button>
+      </mat-card-actions>
+    </form>
   </mat-card>
 </div>

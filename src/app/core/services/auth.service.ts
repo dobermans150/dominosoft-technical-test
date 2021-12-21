@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Employee } from '@core/models/employee.model';
 import { User } from '@core/models/user.model';
-import { Observable, throwError } from 'rxjs';
+import { Observable, Observer, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -9,69 +9,83 @@ import { Observable, throwError } from 'rxjs';
 export class AuthService {
   constructor() {}
 
-  login(email: string, password: string) {
+  login(email: string, password: string): Observable<User> {
     const usersLocalStorage = localStorage.getItem('users');
 
     const users: User[] = usersLocalStorage
-      ? (JSON.parse(JSON.stringify(usersLocalStorage)) as Array<User>)
+      ? (JSON.parse(usersLocalStorage) as Array<User>)
       : ([] as Array<User>);
 
     const user = users.find(
       (user) => user.username === email && user.password === password
     );
 
-    if (!user) {
-      return throwError(() => {
-        const error: any = new Error('user or password is incorrect');
-        error.describe = {
-          status: 400,
-          message: 'Invalid username or password',
-        };
+    const userObservable: Observable<User> = new Observable((subscribe) => {
+      if (!user) {
+        subscribe.error(
+          throwError(() => {
+            const error: any = new Error('user or password is incorrect');
 
-        return error;
-      });
-    }
+            return error;
+          })
+        );
+      }
 
-    localStorage.setItem('session', JSON.stringify(user));
+      if (!users) {
+        subscribe.error(
+          throwError(() => {
+            const error: any = new Error('users not found');
 
-    return user as Observable<User>;
+            return error;
+          })
+        );
+      }
+      localStorage.setItem('session', JSON.stringify(user));
+      subscribe.next(user);
+    });
+
+    return userObservable;
   }
 
   getSession() {
     const session = JSON.parse(JSON.stringify(localStorage.getItem('session')));
 
-    if (!session) {
-      return throwError(() => {
-        const error: any = new Error('Not active session');
-        error.describe = {
-          status: 400,
-          message: 'Session not found',
-        };
+    const sessionObservable = new Observable((subscribe) => {
+      if (!session) {
+        subscribe.error(
+          throwError(() => {
+            const error: any = new Error('session not found');
 
-        return error;
-      });
-    }
+            return error;
+          })
+        );
+      }
 
-    return session as Observable<User>;
+      subscribe.error;
+    });
+
+    return sessionObservable;
   }
 
   logOut() {
     const user = JSON.parse(JSON.stringify(localStorage.getItem('session')));
     localStorage.removeItem('session');
 
-    if (!user) {
-      return throwError(() => {
-        const error: any = new Error('Not active session');
-        error.describe = {
-          status: 400,
-          message: 'Session not found',
-        };
+    const userObservable = new Observable((subscribe) => {
+      if (!user) {
+        subscribe.error(
+          throwError(() => {
+            const error: any = new Error('user not found');
 
-        return error;
-      });
-    }
+            return error;
+          })
+        );
+      }
 
-    return user as Observable<User>;
+      subscribe.next(user);
+    });
+
+    return userObservable;
   }
 
   createUser(user: User) {
@@ -80,8 +94,12 @@ export class AuthService {
     );
 
     const newUsers: User[] = [...users, user];
-    localStorage.setItem('users', JSON.stringify(newUsers));
 
-    return user as Observable<User>;
+    const userObservable = new Observable((subscribe) => {
+      localStorage.setItem('users', JSON.stringify(newUsers));
+      subscribe.next(newUsers);
+    });
+
+    return userObservable;
   }
 }
