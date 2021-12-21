@@ -10,25 +10,29 @@ import { Employee } from '@core/models/employee.model';
 export class EmployeeListComponent implements OnInit {
   employees: Employee[] = [
     {
-      dui: '123',
+      uuid: '8c9bfa6f-bd70-498a-b832-346d92884f84',
+      dui: 123,
       names: 'Christian',
       lastnames: 'Guevara',
       email: 'Christian@email.com',
     },
     {
-      dui: '123',
+      uuid: '8c9bfa6f-bd70-498a-b832-346d92884f84',
+      dui: 1234,
       names: 'Christian',
       lastnames: 'Guevara',
       email: 'Christian@email.com',
     },
     {
-      dui: '123',
+      uuid: '8c9bfa6f-bd70-498a-b832-346d92884f84',
+      dui: 4321,
       names: 'Christian',
       lastnames: 'Guevara',
       email: 'Christian@email.com',
     },
     {
-      dui: '123',
+      uuid: '8c9bfa6f-bd70-498a-b832-346d92884f84',
+      dui: 555,
       names: 'Christian',
       lastnames: 'Guevara',
       email: 'Christian@email.com',

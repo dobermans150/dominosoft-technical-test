@@ -1,5 +1,6 @@
 export interface User {
-  dui?: string;
+  uuid?: string;
+  dui?: number;
   role?: string;
   username?: string;
   password?: string;

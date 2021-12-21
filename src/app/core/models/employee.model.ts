@@ -1,5 +1,6 @@
 export interface Employee {
-  dui?: string;
+  uuid?: string;
+  dui?: number;
   names?: string;
   lastnames?: string;
   email?: string;
@@ -13,5 +14,5 @@ export interface Employee {
 interface vaccunation_data {
   type?: string;
   date?: string;
-  dose?: string;
+  dose?: number;
 }
