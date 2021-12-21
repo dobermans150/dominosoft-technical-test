@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { AdminRoutingModule } from './admin-routing.module';
@@ -20,6 +20,8 @@ import { EmployeeItemsComponent } from './components/employee-items/employee-ite
     AdminRoutingModule,
     SharedModule,
     MaterialModule
-  ]
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+
 })
 export class AdminModule { }

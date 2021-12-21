@@ -1,0 +1,86 @@
+<mat-card class="detail_container">
+  <mat-card-title>Detalle Empleado</mat-card-title>
+  <mat-card-content>
+    <!-- Birthday -->
+    <div>
+      <mat-form-field class="detail_input" appearance="fill">
+        <mat-label>Fecha de nacimiento</mat-label>
+        <input matInput [disabled]="isDisabled" [matDatepicker]="picker" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <!-- Address -->
+    <div>
+      <mat-form-field class="detail_input">
+        <mat-label>Direccion</mat-label>
+        <input matInput [disabled]="isDisabled" type="text" />
+      </mat-form-field>
+    </div>
+
+    <!-- Telephone -->
+    <div>
+      <mat-form-field class="detail_input">
+        <mat-label>Telefono</mat-label>
+        <input matInput [disabled]="isDisabled" type="tel" />
+      </mat-form-field>
+    </div>
+
+    <!-- Vaccine -->
+    <div>
+      <mat-form-field class="detail_input">
+        <mat-label>¿Estas Vacunado?</mat-label>
+        <input matInput [disabled]="isDisabled" type="email" />
+      </mat-form-field>
+    </div>
+
+
+    <!-- Vaccine type -->
+    <div>
+      <mat-form-field class="detail_input">
+        <mat-label>Tipo de vacuna</mat-label>
+        <mat-select [disabled]="isDisabled">
+          <mat-option *ngFor="let vaccine of vaccineType" [value]="vaccine.value" >
+            {{vaccine.viewValue}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+
+    <!-- Doses -->
+    <div>
+      <mat-form-field class="detail_input">
+        <mat-label>Nro. de dosis</mat-label>
+        <input matInput [disabled]="isDisabled" type="number" />
+      </mat-form-field>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions *ngIf="!isDisabled" class="detail_action">
+    <button
+      type="submit"
+      class="detail_button"
+      mat-flat-button
+      color="primary"
+      (click)="onSubmit($event)"
+    >
+      Confirmar
+    </button>
+    <button class="detail_button" mat-flat-button color="warn" (click)="edit()">
+      Cancelar
+    </button>
+  </mat-card-actions>
+
+  <mat-card-actions *ngIf="isDisabled" class="detail_action">
+    <button mat-raised-button color="accent" (click)="edit()">Editar</button>
+    <button
+      class="detail_button"
+      mat-flat-button
+      color="warn"
+      (click)="closeSession()"
+    >
+      Volver
+    </button>
+  </mat-card-actions>
+</mat-card>

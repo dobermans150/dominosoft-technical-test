@@ -1,1 +1,56 @@
-<p>employee-detail works!</p>
+<mat-card class="detail_container">
+  <mat-card-title>Detalle Empleado</mat-card-title>
+  <mat-card-content>
+    <!-- Dui -->
+    <div>
+      <mat-form-field class="detail_input">
+        <mat-label>Dui</mat-label>
+        <input matInput [disabled]="isDisabled" type="text" />
+      </mat-form-field>
+    </div>
+    <!-- Name -->
+    <div>
+      <mat-form-field class="detail_input">
+        <mat-label>Nombres</mat-label>
+        <input matInput [disabled]="isDisabled" type="text" />
+      </mat-form-field>
+    </div>
+
+    <!-- Lastnames -->
+    <div>
+      <mat-form-field class="detail_input">
+        <mat-label>Apellidos</mat-label>
+        <input matInput [disabled]="isDisabled" type="text" />
+      </mat-form-field>
+    </div>
+
+    <!-- email -->
+    <div>
+      <mat-form-field class="detail_input">
+        <mat-label>Correo</mat-label>
+        <input matInput [disabled]="isDisabled" type="email" />
+      </mat-form-field>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions *ngIf="!isDisabled" class="detail_action">
+    <button type="submit" class="detail_button" mat-flat-button color="primary" (click) = "onSubmit($event)">
+      Confirmar
+    </button>
+    <button class="detail_button" mat-flat-button color="warn" (click)="edit()">
+      Cancelar
+    </button>
+  </mat-card-actions>
+
+  <mat-card-actions *ngIf="isDisabled" class="detail_action">
+    <button mat-raised-button color="accent" (click)="edit()">Editar</button>
+    <button
+      class="detail_button"
+      mat-flat-button
+      color="warn"
+      (click)="goBack()"
+    >
+      Volver
+    </button>
+  </mat-card-actions>
+</mat-card>
