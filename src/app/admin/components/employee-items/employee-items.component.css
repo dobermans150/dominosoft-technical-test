@@ -1,0 +1,14 @@
+.item {
+  margin: 8px auto;
+  width: 68%;
+}
+
+.employee_actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.employee_button {
+  margin: 0px 8px;
+}
+

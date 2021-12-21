@@ -1,0 +1,18 @@
+<div class="">
+  <h1>Lista de Empleados</h1>
+
+  <div class="filters"></div>
+
+  <div class="employee_actions">
+    <button mat-raised-button color="accent" (click)="addEmployee()">
+      Agregar
+    </button>
+  </div>
+
+  <div class="employee_container">
+    <app-employee-items
+      *ngFor="let employee of employees"
+      [employee]="employee"
+    ></app-employee-items>
+  </div>
+</div>

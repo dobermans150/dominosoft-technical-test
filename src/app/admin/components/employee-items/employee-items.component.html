@@ -1,0 +1,17 @@
+<mat-card class="item">
+  <mat-card-title
+    >{{ employee.names }} {{ employee.lastnames }}</mat-card-title
+  >
+  <mat-card-content>
+    <p>duis: {{ employee.dui }}</p>
+    <p>correo:{{ employee.email }}</p>
+  </mat-card-content>
+  <mat-card-actions class="employee_actions">
+    <button class="employee_button"mat-flat-button (click)="viewDetail()" color="primary">
+      Ver detalle
+    </button>
+    <button class="employee_button" mat-flat-button color="warn">
+      Eliminar
+    </button>
+  </mat-card-actions>
+</mat-card>
