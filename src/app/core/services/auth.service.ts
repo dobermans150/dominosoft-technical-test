@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Employee } from '@core/models/employee.model';
 import { User } from '@core/models/user.model';
 import { Observable, throwError } from 'rxjs';
 
@@ -69,6 +70,17 @@ export class AuthService {
         return error;
       });
     }
+
+    return user as Observable<User>;
+  }
+
+  createUser(user: User) {
+    const users: User[] = JSON.parse(
+      JSON.stringify(localStorage.getItem('users'))
+    );
+
+    const newUsers: User[] = [...users, user];
+    localStorage.setItem('users', JSON.stringify(newUsers));
 
     return user as Observable<User>;
   }
