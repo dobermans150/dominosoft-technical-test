@@ -101,6 +101,7 @@
         mat-flat-button
         color="primary"
         (click)="onSubmit($event)"
+        [disabled]="form.invalid"
       >
         Confirmar
       </button>

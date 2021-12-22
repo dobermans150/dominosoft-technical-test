@@ -72,6 +72,10 @@ export class EmployeeDetailComponent implements OnInit {
         type: 'maxlength',
         msg: 'debe ser de un maximo de 9 digitos',
       },
+      {
+        type: 'number_error',
+        msg: 'Solo puede ingresar numeros',
+      },
     ],
     email: [
       {
@@ -125,7 +129,7 @@ export class EmployeeDetailComponent implements OnInit {
           Validators.required,
           Validators.minLength(9),
           Validators.maxLength(9),
-          MyValidators.maxLengthText(9),
+          MyValidators.onlyNumbers,
         ],
       ],
       names: [
@@ -143,7 +147,6 @@ export class EmployeeDetailComponent implements OnInit {
           Validators.required,
           Validators.minLength(6),
           Validators.maxLength(24),
-          MyValidators.maxLengthText(24),
           MyValidators.onlyLetters,
         ],
       ],
@@ -153,7 +156,6 @@ export class EmployeeDetailComponent implements OnInit {
           Validators.required,
           Validators.minLength(6),
           Validators.maxLength(24),
-          MyValidators.maxLengthText(24),
           MyValidators.trueEmail,
         ],
       ],
@@ -194,15 +196,16 @@ export class EmployeeDetailComponent implements OnInit {
     event.preventDefault();
     if (!this.isEdit) {
       const uuid = uuidv4();
+      const { dui, ...employee } = this.form.value;
       this.employeesService
-        .createEmployees({ ...this.form.value, uuid })
+        .createEmployees({ ...employee, uuid, dui: parseInt(dui) })
         .subscribe((employees) => {
           this.router.navigate(['/admin']);
         });
     } else {
       this.employeesService
         .updateEmployee({
-          uuid: this.employee.uuid,
+          ...this.employee,
           ...this.form.value,
         })
         .subscribe((employee) => {

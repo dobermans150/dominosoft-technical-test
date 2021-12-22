@@ -76,4 +76,18 @@ export class MyValidators {
 
     return null;
   }
+
+  static onlyNumbers(Controls: AbstractControl) {
+    const regex = new RegExp('^[1-9]+$');
+
+    const value = Controls.value;
+
+    const valid1 = regex.test(value);
+
+    if (!valid1 && value.length > 0) {
+      return { number_error: true };
+    }
+
+    return null;
+  }
 }
