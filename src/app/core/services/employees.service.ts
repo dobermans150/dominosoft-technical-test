@@ -30,7 +30,7 @@ export class EmployeesService {
 
   getEmployeeById(dui: number): Observable<Employee> {
     const employees: Employee[] = JSON.parse(
-      JSON.stringify(localStorage.getItem('employees'))
+      localStorage.getItem('employees') as string
     );
 
     const employee = employees

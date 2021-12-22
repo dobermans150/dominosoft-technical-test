@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Employee } from '@core/models/employee.model';
 import { User } from '@core/models/user.model';
-import { Observable, Observer, throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',

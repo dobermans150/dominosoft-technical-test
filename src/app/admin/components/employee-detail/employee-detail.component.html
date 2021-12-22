@@ -1,56 +1,133 @@
 <mat-card class="detail_container">
   <mat-card-title>Detalle Empleado</mat-card-title>
-  <mat-card-content>
-    <!-- Dui -->
-    <div>
-      <mat-form-field class="detail_input">
-        <mat-label>Dui</mat-label>
-        <input matInput [disabled]="isDisabled" type="text" />
-      </mat-form-field>
-    </div>
-    <!-- Name -->
-    <div>
-      <mat-form-field class="detail_input">
-        <mat-label>Nombres</mat-label>
-        <input matInput [disabled]="isDisabled" type="text" />
-      </mat-form-field>
-    </div>
+  <form [formGroup]="form">
+    <mat-card-content>
+      <!-- Dui -->
+      <div>
+        <mat-form-field class="detail_input">
+          <mat-label>Dui</mat-label>
+          <input
+            matInput
+            type="text"
+            formControlName="dui"
+            autocomplete="off"
+          />
 
-    <!-- Lastnames -->
-    <div>
-      <mat-form-field class="detail_input">
-        <mat-label>Apellidos</mat-label>
-        <input matInput [disabled]="isDisabled" type="text" />
-      </mat-form-field>
-    </div>
+          <!-- Validations -->
+          <ng-container *ngIf="duiField.touched || duiField.dirty" class="">
+            <ng-container *ngFor="let validation of validations.dui">
+              <mat-error *ngIf="duiField.hasError(validation.type)">
+                {{ validation.msg }}
+              </mat-error>
+            </ng-container>
+          </ng-container>
+        </mat-form-field>
+      </div>
 
-    <!-- email -->
-    <div>
-      <mat-form-field class="detail_input">
-        <mat-label>Correo</mat-label>
-        <input matInput [disabled]="isDisabled" type="email" />
-      </mat-form-field>
-    </div>
-  </mat-card-content>
+      <!-- Name -->
+      <div>
+        <mat-form-field class="detail_input">
+          <mat-label>Nombres</mat-label>
+          <input
+            matInput
+            type="text"
+            formControlName="names"
+            autocomplete="off"
+          />
 
-  <mat-card-actions *ngIf="!isDisabled" class="detail_action">
-    <button type="submit" class="detail_button" mat-flat-button color="primary" (click) = "onSubmit($event)">
-      Confirmar
-    </button>
-    <button class="detail_button" mat-flat-button color="warn" (click)="edit()">
-      Cancelar
-    </button>
-  </mat-card-actions>
+          <!-- Validations -->
+          <ng-container *ngIf="namesField.touched || namesField.dirty" class="">
+            <ng-container *ngFor="let validation of validations.names">
+              <mat-error *ngIf="namesField.hasError(validation.type)">
+                {{ validation.msg }}
+              </mat-error>
+            </ng-container>
+          </ng-container>
+        </mat-form-field>
+      </div>
 
-  <mat-card-actions *ngIf="isDisabled" class="detail_action">
-    <button mat-raised-button color="accent" (click)="edit()">Editar</button>
-    <button
-      class="detail_button"
-      mat-flat-button
-      color="warn"
-      (click)="goBack()"
-    >
-      Volver
-    </button>
-  </mat-card-actions>
+      <!-- Lastnames -->
+      <div>
+        <mat-form-field class="detail_input">
+          <mat-label>Apellidos</mat-label>
+          <input
+            matInput
+            type="text"
+            formControlName="lastnames"
+            autocomplete="off"
+          />
+
+          <!-- Validations -->
+          <ng-container
+            *ngIf="lastnamesField.touched || lastnamesField.dirty"
+            class=""
+          >
+            <ng-container *ngFor="let validation of validations.lastnames">
+              <mat-error *ngIf="lastnamesField.hasError(validation.type)">
+                {{ validation.msg }}
+              </mat-error>
+            </ng-container>
+          </ng-container>
+        </mat-form-field>
+      </div>
+
+      <!-- email -->
+      <div>
+        <mat-form-field class="detail_input">
+          <mat-label>Correo</mat-label>
+          <input
+            matInput
+            type="email"
+            formControlName="email"
+            autocomplete="off"
+          />
+
+          <!-- Validations -->
+          <ng-container *ngIf="emailField.touched || emailField.dirty" class="">
+            <ng-container *ngFor="let validation of validations.email">
+              <mat-error *ngIf="emailField.hasError(validation.type)">
+                {{ validation.msg }}
+              </mat-error>
+            </ng-container>
+          </ng-container>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions *ngIf="!isDisabled" class="detail_action">
+      <button
+        type="submit"
+        class="detail_button"
+        mat-flat-button
+        color="primary"
+        (click)="onSubmit($event)"
+      >
+        Confirmar
+      </button>
+      <button
+        type="button"
+        class="detail_button"
+        mat-flat-button
+        color="warn"
+        (click)="edit()"
+      >
+        Cancelar
+      </button>
+    </mat-card-actions>
+
+    <mat-card-actions *ngIf="isDisabled && employee" class="detail_action">
+      <button type="button" mat-raised-button color="accent" (click)="edit()">
+        Editar
+      </button>
+      <button
+        type="button"
+        class="detail_button"
+        mat-flat-button
+        color="warn"
+        (click)="goBack()"
+      >
+        Volver
+      </button>
+    </mat-card-actions>
+  </form>
 </mat-card>

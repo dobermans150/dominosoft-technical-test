@@ -7,21 +7,21 @@ import { EmployeeDetailComponent } from './components/employee-detail/employee-d
 import { SharedModule } from '@shared/shared.module';
 import { MaterialModule } from '../material/material.module';
 import { EmployeeItemsComponent } from './components/employee-items/employee-items.component';
-
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
     EmployeeListComponent,
     EmployeeDetailComponent,
-    EmployeeItemsComponent
+    EmployeeItemsComponent,
   ],
   imports: [
     CommonModule,
     AdminRoutingModule,
     SharedModule,
-    MaterialModule
+    MaterialModule,
+    ReactiveFormsModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-
 })
-export class AdminModule { }
+export class AdminModule {}
