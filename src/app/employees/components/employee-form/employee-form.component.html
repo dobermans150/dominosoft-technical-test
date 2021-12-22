@@ -1,86 +1,188 @@
 <mat-card class="detail_container">
   <mat-card-title>Detalle Empleado</mat-card-title>
-  <mat-card-content>
-    <!-- Birthday -->
-    <div>
-      <mat-form-field class="detail_input" appearance="fill">
-        <mat-label>Fecha de nacimiento</mat-label>
-        <input matInput [disabled]="isDisabled" [matDatepicker]="picker" />
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
-    </div>
-    <!-- Address -->
-    <div>
-      <mat-form-field class="detail_input">
-        <mat-label>Direccion</mat-label>
-        <input matInput [disabled]="isDisabled" type="text" />
-      </mat-form-field>
-    </div>
+  <form [formGroup]="form" (onSubmit)="onSubmit($event)">
+    <mat-card-content>
+      <!-- Birthday -->
+      <div>
+        <mat-form-field class="detail_input" appearance="fill">
+          <mat-label>Fecha de nacimiento</mat-label>
+          <input
+            matInput
+            [matDatepicker]="picker1"
+            formControlName="birthdate"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="picker1"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker1></mat-datepicker>
 
-    <!-- Telephone -->
-    <div>
-      <mat-form-field class="detail_input">
-        <mat-label>Telefono</mat-label>
-        <input matInput [disabled]="isDisabled" type="tel" />
-      </mat-form-field>
-    </div>
+          <!-- Validations -->
+          <ng-container
+            *ngIf="birthdateField.touched || birthdateField.dirty"
+            class=""
+          >
+            <ng-container *ngFor="let validation of validations.birthdate">
+              <mat-error *ngIf="birthdateField.hasError(validation.type)">
+                {{ validation.msg }}
+              </mat-error>
+            </ng-container>
+          </ng-container>
+        </mat-form-field>
+      </div>
+      <!-- Address -->
+      <div>
+        <mat-form-field class="detail_input">
+          <mat-label>Direccion</mat-label>
+          <input matInput type="text" formControlName="address" />
 
-    <!-- Vaccine -->
-    <div>
-      <mat-form-field class="detail_input">
-        <mat-label>¿Estas Vacunado?</mat-label>
-        <input matInput [disabled]="isDisabled" type="email" />
-      </mat-form-field>
-    </div>
+          <!-- Validations -->
+          <ng-container
+            *ngIf="addressField.touched || addressField.dirty"
+            class=""
+          >
+            <ng-container *ngFor="let validation of validations.address">
+              <mat-error *ngIf="addressField.hasError(validation.type)">
+                {{ validation.msg }}
+              </mat-error>
+            </ng-container>
+          </ng-container>
+        </mat-form-field>
+      </div>
 
+      <!-- Telephone -->
+      <div>
+        <mat-form-field class="detail_input">
+          <mat-label>Telefono</mat-label>
+          <input matInput type="tel" formControlName="telephone" />
 
-    <!-- Vaccine type -->
-    <div>
-      <mat-form-field class="detail_input">
-        <mat-label>Tipo de vacuna</mat-label>
-        <mat-select [disabled]="isDisabled">
-          <mat-option *ngFor="let vaccine of vaccineType" [value]="vaccine.value" >
-            {{vaccine.viewValue}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
+          <!-- Validations -->
+          <ng-container
+            *ngIf="telephoneField.touched || telephoneField.dirty"
+            class=""
+          >
+            <ng-container *ngFor="let validation of validations.telephone">
+              <mat-error *ngIf="telephoneField.hasError(validation.type)">
+                {{ validation.msg }}
+              </mat-error>
+            </ng-container>
+          </ng-container>
+        </mat-form-field>
+      </div>
 
+      <!-- Vaccine -->
+      <div>
+        <mat-checkbox color="accent" formControlName="vaccunation_status"
+          >¿Esta Vacunado?</mat-checkbox
+        >
+      </div>
 
-    <!-- Doses -->
-    <div>
-      <mat-form-field class="detail_input">
-        <mat-label>Nro. de dosis</mat-label>
-        <input matInput [disabled]="isDisabled" type="number" />
-      </mat-form-field>
-    </div>
-  </mat-card-content>
+      <div>
+        <!-- Vaccine type -->
+        <div>
+          <mat-form-field class="detail_input">
+            <mat-label>Tipo de vacuna</mat-label>
+            <mat-select formControlName="VaccineType">
+              <mat-option
+                *ngFor="let vaccine of vaccineType"
+                [value]="vaccine.value"
+              >
+                {{ vaccine.viewValue }}
+              </mat-option>
+            </mat-select>
 
-  <mat-card-actions *ngIf="!isDisabled" class="detail_action">
-    <button
-      type="submit"
-      class="detail_button"
-      mat-flat-button
-      color="primary"
-      (click)="onSubmit($event)"
-    >
-      Confirmar
-    </button>
-    <button class="detail_button" mat-flat-button color="warn" (click)="edit()">
-      Cancelar
-    </button>
-  </mat-card-actions>
+            <!-- Validations -->
+            <ng-container
+              *ngIf="VaccineTypeField.touched || VaccineTypeField.dirty"
+              class=""
+            >
+              <ng-container *ngFor="let validation of validations.VaccineType">
+                <mat-error *ngIf="VaccineTypeField.hasError(validation.type)">
+                  {{ validation.msg }}
+                </mat-error>
+              </ng-container>
+            </ng-container>
+          </mat-form-field>
+        </div>
 
-  <mat-card-actions *ngIf="isDisabled" class="detail_action">
-    <button mat-raised-button color="accent" (click)="edit()">Editar</button>
-    <button
-      class="detail_button"
-      mat-flat-button
-      color="warn"
-      (click)="closeSession()"
-    >
-      Volver
-    </button>
-  </mat-card-actions>
+        <!-- Vaccine Date -->
+
+        <div>
+          <mat-form-field class="detail_input" appearance="fill">
+            <mat-label>Fecha de vacunacion</mat-label>
+            <input
+              matInput
+              [matDatepicker]="picker2"
+              formControlName="vaccineDate"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="picker2"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker2></mat-datepicker>
+
+            <!-- Validations -->
+            <ng-container
+              *ngIf="vaccineDateField.touched || vaccineDateField.dirty"
+              class=""
+            >
+              <ng-container *ngFor="let validation of validations.vaccineDate">
+                <mat-error *ngIf="vaccineDateField.hasError(validation.type)">
+                  {{ validation.msg }}
+                </mat-error>
+              </ng-container>
+            </ng-container>
+          </mat-form-field>
+        </div>
+
+        <!-- Doses -->
+        <div>
+          <mat-form-field class="detail_input">
+            <mat-label>Nro. de dosis</mat-label>
+            <input matInput type="number" formControlName="dose" />
+            <!-- Validations -->
+            <ng-container *ngIf="doseField.touched || doseField.dirty" class="">
+              <ng-container *ngFor="let validation of validations.dose">
+                <mat-error *ngIf="doseField.hasError(validation.type)">
+                  {{ validation.msg }}
+                </mat-error>
+              </ng-container>
+            </ng-container>
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions *ngIf="!isDisabled" class="detail_action">
+      <button
+        type="submit"
+        class="detail_button"
+        mat-flat-button
+        color="primary"
+        (click)="onSubmit($event)"
+      >
+        Confirmar
+      </button>
+      <button
+        class="detail_button"
+        mat-flat-button
+        color="warn"
+        (click)="edit()"
+      >
+        Cancelar
+      </button>
+    </mat-card-actions>
+
+    <mat-card-actions *ngIf="isDisabled" class="detail_action">
+      <button mat-raised-button color="accent" (click)="edit()">Editar</button>
+      <button
+        class="detail_button"
+        mat-flat-button
+        color="warn"
+        (click)="closeSession()"
+      >
+        Volver
+      </button>
+    </mat-card-actions>
+  </form>
 </mat-card>
