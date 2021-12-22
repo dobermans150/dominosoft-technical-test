@@ -55,28 +55,30 @@ export class EmployeesService {
 
   updateEmployee(newEmployee: Employee) {
     const employees: Employee[] = JSON.parse(
-      JSON.stringify(localStorage.getItem('employees'))
+      localStorage.getItem('employees') as string
     );
-
-    if (!employees) {
-      return throwError(() => {
-        const error: any = new Error('Not employees to update');
-        error.describe = {
-          status: 400,
-          message: 'Not employees to update',
-        };
-
-        return error;
-      });
-    }
 
     const newEmployees = employees.map((employee) =>
       employee.dui === newEmployee.dui ? newEmployee : employee
-    ) as unknown;
+    );
 
-    localStorage.setItem('employees', JSON.stringify(newEmployees));
+    const employeesObservable = new Observable<Employee>((subscribe) => {
+      if (!employees) {
+        subscribe.error(
+          throwError(() => {
+            const error: any = new Error('Employees not found');
 
-    return newEmployees as Observable<Employee[]>;
+            return error;
+          })
+        );
+        return;
+      }
+
+      localStorage.setItem('employees', JSON.stringify(newEmployees));
+      subscribe.next(newEmployee);
+    });
+
+    return employeesObservable;
   }
 
   deleteEmployee(dui: number): Observable<Employee[]> {
@@ -111,11 +113,15 @@ export class EmployeesService {
 
   createEmployees(employee: Employee): Observable<Employee> {
     const employees: Employee[] = localStorage.getItem('employees')
-      ? JSON.parse(JSON.stringify(localStorage.getItem('employees')))
+      ? JSON.parse(localStorage.getItem('employees') as string)
       : [];
     const newEmployees = [...employees, employee];
-    localStorage.setItem('employees', JSON.stringify(newEmployees));
 
-    return employee as Observable<Employee>;
+    const employeeObservable = new Observable<Employee>((subscribe) => {
+      subscribe.next(employee);
+      localStorage.setItem('employees', JSON.stringify(newEmployees));
+    });
+
+    return employeeObservable;
   }
 }

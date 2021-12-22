@@ -1,6 +1,6 @@
 <mat-card class="detail_container">
   <mat-card-title>Detalle Empleado</mat-card-title>
-  <form [formGroup]="form">
+  <form [formGroup]="form" (onSubmit)="onSubmit($event)">
     <mat-card-content>
       <!-- Dui -->
       <div>

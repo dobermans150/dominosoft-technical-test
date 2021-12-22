@@ -7,8 +7,9 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { Employee } from '../../../core/models/employee.model';
-import { MyValidators } from '../../../utils/validators';
+import { Employee } from '@core/models/employee.model';
+import { MyValidators } from '@utils/validators';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-employee-detail',
@@ -16,8 +17,9 @@ import { MyValidators } from '../../../utils/validators';
   styleUrls: ['./employee-detail.component.css'],
 })
 export class EmployeeDetailComponent implements OnInit {
-  employee: Employee | null = null;
+  employee: Employee;
   isDisabled: boolean = true;
+  isEdit: boolean = false;
   form: FormGroup;
 
   validations = {
@@ -34,6 +36,10 @@ export class EmployeeDetailComponent implements OnInit {
         type: 'maxlength',
         msg: 'debe ser de un maximo de 24 caracteres',
       },
+      {
+        type: 'letter_error',
+        msg: 'Ingrese un nombre valido',
+      },
     ],
     lastnames: [
       {
@@ -47,6 +53,10 @@ export class EmployeeDetailComponent implements OnInit {
       {
         type: 'maxlength',
         msg: 'debe ser de un maximo de 24 caracteres',
+      },
+      {
+        type: 'letter_error',
+        msg: 'Ingrese un apellido valido',
       },
     ],
     dui: [
@@ -90,6 +100,7 @@ export class EmployeeDetailComponent implements OnInit {
     private employeesService: EmployeesService
   ) {
     this.form = this.formBuilder();
+    this.employee = {};
   }
 
   ngOnInit(): void {
@@ -97,6 +108,10 @@ export class EmployeeDetailComponent implements OnInit {
       this.isDisabled = params['id'] ? true : false;
       if (params['id']) {
         this.getEmployee(params['id']);
+        this.isEdit = true;
+        const { names, lastnames, email, dui } = this.employee;
+        this.form.setValue({ names, lastnames, email, dui });
+        this.form.disable();
       }
     });
   }
@@ -104,7 +119,7 @@ export class EmployeeDetailComponent implements OnInit {
   private formBuilder() {
     return this.formBuilderService.group({
       dui: [
-        { value: '', disabled: true },
+        { value: '', disabled: false },
 
         [
           Validators.required,
@@ -114,25 +129,26 @@ export class EmployeeDetailComponent implements OnInit {
         ],
       ],
       names: [
-        { value: '', disabled: true },
+        { value: '', disabled: false },
         [
           Validators.required,
           Validators.minLength(6),
           Validators.maxLength(24),
-          MyValidators.maxLengthText(24),
+          MyValidators.onlyLetters,
         ],
       ],
       lastnames: [
-        { value: '', disabled: true },
+        { value: '', disabled: false },
         [
           Validators.required,
           Validators.minLength(6),
           Validators.maxLength(24),
           MyValidators.maxLengthText(24),
+          MyValidators.onlyLetters,
         ],
       ],
       email: [
-        { value: '', disabled: true },
+        { value: '', disabled: false },
         [
           Validators.required,
           Validators.minLength(6),
@@ -145,7 +161,7 @@ export class EmployeeDetailComponent implements OnInit {
   }
 
   edit() {
-    if (this.employee) {
+    if (this.isEdit) {
       this.isDisabled = !this.isDisabled;
       if (!this.isDisabled) {
         this.duiField.enable();
@@ -171,13 +187,31 @@ export class EmployeeDetailComponent implements OnInit {
     const userDui = parseInt(dui);
     this.employeesService.getEmployeeById(userDui).subscribe((employee) => {
       this.employee = employee;
-      console.log(employee);
     });
   }
 
   onSubmit(event: Event) {
     event.preventDefault();
-    console.log('Employee updated');
+    if (!this.isEdit) {
+      const uuid = uuidv4();
+      this.employeesService
+        .createEmployees({ ...this.form.value, uuid })
+        .subscribe((employees) => {
+          this.router.navigate(['/admin']);
+        });
+    } else {
+      this.employeesService
+        .updateEmployee({
+          uuid: this.employee.uuid,
+          ...this.form.value,
+        })
+        .subscribe((employee) => {
+          const { dui, names, email, lastnames } = employee;
+          this.form.setValue({ dui, names, email, lastnames });
+          this.isDisabled = true;
+          this.form.disable();
+        });
+    }
   }
 
   get namesField(): AbstractControl {

@@ -59,4 +59,21 @@ export class MyValidators {
       return null;
     }
   }
+
+  static onlyLetters(Controls: AbstractControl) {
+    const regex1 = new RegExp('^[a-zA-Z]+[ ]+[a-zA-Z]+[ ]+[a-zA-Z]+$');
+    const regex2 = new RegExp('^[a-zA-Z]+[ ]+[a-zA-Z]+$');
+    const regex3 = new RegExp('^[a-zA-Z]+$');
+    const value = Controls.value;
+
+    const valid1 = regex1.test(value);
+    const valid2 = regex2.test(value);
+    const valid3 = regex3.test(value);
+
+    if (!valid1 && !valid2 && !valid3 && value.length > 0) {
+      return { letter_error: true };
+    }
+
+    return null;
+  }
 }
