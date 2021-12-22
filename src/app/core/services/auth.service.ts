@@ -50,17 +50,6 @@ export class AuthService {
     const session = JSON.parse(localStorage.getItem('session') as string);
 
     const sessionObservable = new Observable((subscribe) => {
-     /*  if (!session) {
-        subscribe.error(
-          throwError(() => {
-            const error: any = new Error('session not found');
-
-            return error;
-          })
-        );
-        return;
-      } */
-
       subscribe.next(session);
     });
     return sessionObservable;

@@ -52,6 +52,8 @@ export class EmployeeListComponent implements OnInit {
     this.employeesService
       .deleteEmployee(employeeDui)
       .subscribe((employee) => {});
+
+    this.authService.deleteUser(employeeDui).subscribe((user) => {});
     this.getEmployees();
   }
 }
