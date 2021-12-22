@@ -33,9 +33,7 @@ export class EmployeesService {
       localStorage.getItem('employees') as string
     );
 
-    const employee = employees
-      ? employees.find((employee) => employee.dui === dui)
-      : null;
+    const employee = employees.find((employee) => employee.dui === dui);
 
     const employeeObservable = new Observable<Employee>((subscribe) => {
       if (!employee) {

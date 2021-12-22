@@ -7,7 +7,10 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { MyValidators } from '@utils/validators';
+import { EmployeesService } from '../../../core/services/employees.service';
+import { User } from '../../../core/models/user.model';
+import { Employee } from '../../../core/models/employee.model';
+import { catchError } from 'rxjs';
 @Component({
   selector: 'app-employee-form',
   templateUrl: './employee-form.component.html',
@@ -15,6 +18,8 @@ import { MyValidators } from '@utils/validators';
 })
 export class EmployeeFormComponent implements OnInit {
   isDisabled: boolean = true;
+  user: User = {};
+  employee: Employee = {};
   form: FormGroup;
 
   vaccineType = [
@@ -91,12 +96,49 @@ export class EmployeeFormComponent implements OnInit {
   constructor(
     private router: Router,
     private formBuilderService: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private employeesService: EmployeesService
   ) {
     this.form = this.formBuilder();
+    this.user = JSON.parse(localStorage.getItem('session') as string);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getData();
+
+    this.vaccunationStatusField.valueChanges.subscribe((value) => {
+      if (value === true && this.user) {
+        this.doseField.setValidators([
+          Validators.required,
+          Validators.min(1),
+          Validators.max(3),
+        ]);
+
+        this.VaccineTypeField.setValidators([
+          Validators.required,
+          Validators.minLength(6),
+          Validators.maxLength(24),
+        ]);
+
+        this.vaccineDateField.setValidators([Validators.required]);
+        this.vaccineDateField.enable();
+        this.VaccineTypeField.enable();
+        this.doseField.enable();
+      } else {
+        this.doseField.setValidators([]);
+        this.VaccineTypeField.setValidators([]);
+        this.vaccineDateField.setValidators([]);
+
+        this.vaccineDateField.disable();
+        this.VaccineTypeField.disable();
+        this.doseField.disable();
+
+        this.vaccineDateField.setValue('');
+        this.VaccineTypeField.setValue('');
+        this.doseField.setValue('');
+      }
+    });
+  }
 
   private formBuilder() {
     return this.formBuilderService.group({
@@ -109,11 +151,7 @@ export class EmployeeFormComponent implements OnInit {
           Validators.maxLength(24),
         ],
       ],
-      dose: [
-        { value: 0, disabled: true },
-        ,
-        [Validators.required, Validators.min(1), Validators.max(3)],
-      ],
+      dose: [{ value: 0, disabled: true }, []],
       telephone: [
         { value: '', disabled: true },
         [
@@ -123,29 +161,92 @@ export class EmployeeFormComponent implements OnInit {
         ],
       ],
       vaccunation_status: [{ value: false, disabled: true }, []],
-      VaccineType: [
-        { value: '', disabled: true },
-        [
-          Validators.required,
-          Validators.minLength(6),
-          Validators.maxLength(24),
-        ],
-      ],
-      vaccineDate: [{ value: '', disabled: true }, [Validators.required], []],
+      VaccineType: [{ value: '', disabled: true }, []],
+      vaccineDate: [{ value: '', disabled: true }, []],
     });
   }
 
   edit() {
     this.isDisabled = !this.isDisabled;
+    if (!this.isDisabled) {
+      this.form.enable();
+    } else {
+      this.form.disable();
+      this.form.reset();
+    }
   }
 
   closeSession() {
     this.router.navigate(['/auth/login']);
+    this.authService.logOut().subscribe((data) => {});
   }
 
   onSubmit(event: Event) {
     event.preventDefault();
-    console.log('Employee updated');
+    const birthdate = new Date(this.form.value.birthdate);
+    const vaccineDate = new Date(this.form.value.vaccineDate);
+
+    const birthdateString = `${
+      birthdate.getMonth() + 1
+    }/${birthdate.getDate()}/${birthdate.getFullYear()}`;
+
+    const vaccineDateString = `${
+      vaccineDate.getMonth() + 1
+    }/${vaccineDate.getDate()}/${vaccineDate.getFullYear()}`;
+
+    const newEmployees = {
+      ...this.employee,
+      birthdate: birthdateString,
+      address: this.form.value.address,
+      telephone: this.form.value.telephone,
+      vaccunation_status: this.form.value.vaccunation_status,
+      vaccunation_data: {
+        type: this.form.value.VaccineType,
+        date: vaccineDateString,
+        dose: this.form.value.dose,
+      },
+    };
+
+    this.employeesService.updateEmployee(newEmployees).subscribe((employee) => {
+      this.form.disable();
+      this.isDisabled = true;
+    });
+  }
+
+  getData() {
+    const id = this.user.dui || 0;
+
+    this.employeesService
+      .getEmployeeById(id)
+      .pipe(
+        catchError((error) => {
+          console.log(error);
+          return error;
+        })
+      )
+      .subscribe((employee) => {
+        const employeResponse = employee;
+        this.employee = employeResponse as User;
+        const {
+          uuid,
+          email,
+          names,
+          lastnames,
+          vaccunation_data,
+          ...employeeData
+        } = this.employee;
+        const formValues = {
+          address: employeeData.address || '',
+          telephone: employeeData.telephone || '',
+          vaccunation_status: employeeData.vaccunation_status || false,
+          birthdate: new Date(employeeData.birthdate || ''),
+          VaccineType: this.employee.vaccunation_data?.type || '',
+          dose: this.employee.vaccunation_data?.dose || '',
+          vaccineDate: new Date(this.employee.vaccunation_data?.date || ''),
+        };
+
+        this.form.setValue(formValues);
+      });
   }
 
   get birthdateField(): AbstractControl {

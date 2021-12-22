@@ -47,7 +47,7 @@ export class AuthService {
   }
 
   getSession() {
-    const session = JSON.parse(JSON.stringify(localStorage.getItem('session')));
+    const session = JSON.parse(localStorage.getItem('session') as string);
 
     const sessionObservable = new Observable((subscribe) => {
       if (!session) {
@@ -58,11 +58,11 @@ export class AuthService {
             return error;
           })
         );
+        return;
       }
 
-      subscribe.error;
+      subscribe.next(session);
     });
-
     return sessionObservable;
   }
 
