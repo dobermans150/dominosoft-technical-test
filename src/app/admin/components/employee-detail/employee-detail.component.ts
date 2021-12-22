@@ -10,6 +10,7 @@ import {
 import { Employee } from '@core/models/employee.model';
 import { MyValidators } from '@utils/validators';
 import { v4 as uuidv4 } from 'uuid';
+import { AuthService } from '@core/services/auth.service';
 
 @Component({
   selector: 'app-employee-detail',
@@ -101,7 +102,8 @@ export class EmployeeDetailComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private formBuilderService: FormBuilder,
-    private employeesService: EmployeesService
+    private employeesService: EmployeesService,
+    private authService: AuthService
   ) {
     this.form = this.formBuilder();
     this.employee = {};
@@ -197,12 +199,29 @@ export class EmployeeDetailComponent implements OnInit {
     if (!this.isEdit) {
       const uuid = uuidv4();
       const { dui, ...employee } = this.form.value;
+
+      this.authService
+        .createUser({
+          uuid,
+          dui,
+          username: employee.email,
+          password: '123456',
+          role: 'employee',
+        })
+        .subscribe((data) => {});
+
       this.employeesService
         .createEmployees({ ...employee, uuid, dui: parseInt(dui) })
         .subscribe((employees) => {
           this.router.navigate(['/admin']);
         });
     } else {
+      this.authService.updateUser(
+        this.employee.dui as number,
+        this.form.value.email,
+        this.form.value.dui
+      );
+
       this.employeesService
         .updateEmployee({
           ...this.employee,

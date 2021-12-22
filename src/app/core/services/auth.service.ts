@@ -8,7 +8,7 @@ import { Observable, throwError } from 'rxjs';
 export class AuthService {
   constructor() {}
 
-  static login(email: string, password: string): Observable<User> {
+  login(email: string, password: string): Observable<User> {
     const usersLocalStorage = localStorage.getItem('users');
 
     const users: User[] = usersLocalStorage
@@ -46,7 +46,7 @@ export class AuthService {
     return userObservable;
   }
 
-  static getSession() {
+  getSession() {
     const session = JSON.parse(localStorage.getItem('session') as string);
 
     const sessionObservable = new Observable((subscribe) => {
@@ -66,7 +66,7 @@ export class AuthService {
     return sessionObservable;
   }
 
-  static logOut() {
+  logOut() {
     const user = JSON.parse(JSON.stringify(localStorage.getItem('session')));
     localStorage.removeItem('session');
 
@@ -87,7 +87,7 @@ export class AuthService {
     return userObservable;
   }
 
-  static createUser(user: User) {
+  createUser(user: User) {
     const users: User[] = JSON.parse(
       JSON.stringify(localStorage.getItem('users'))
     );
@@ -102,11 +102,7 @@ export class AuthService {
     return userObservable;
   }
 
-  static updateUser(
-    dui: number,
-    email: string,
-    newDui: string
-  ): Observable<User> {
+  updateUser(dui: number, email: string, newDui: string): Observable<User> {
     const users: User[] = JSON.parse(
       JSON.stringify(localStorage.getItem('users'))
     );
@@ -127,7 +123,7 @@ export class AuthService {
     return userObservable;
   }
 
-  static deleteUser(dui: number) {
+  deleteUser(dui: number) {
     const users: User[] = JSON.parse(
       JSON.stringify(localStorage.getItem('users'))
     );
