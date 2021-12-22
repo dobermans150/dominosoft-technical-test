@@ -8,7 +8,7 @@ import { Observable, throwError } from 'rxjs';
 export class AuthService {
   constructor() {}
 
-  login(email: string, password: string): Observable<User> {
+  static login(email: string, password: string): Observable<User> {
     const usersLocalStorage = localStorage.getItem('users');
 
     const users: User[] = usersLocalStorage
@@ -46,7 +46,7 @@ export class AuthService {
     return userObservable;
   }
 
-  getSession() {
+  static getSession() {
     const session = JSON.parse(localStorage.getItem('session') as string);
 
     const sessionObservable = new Observable((subscribe) => {
@@ -66,7 +66,7 @@ export class AuthService {
     return sessionObservable;
   }
 
-  logOut() {
+  static logOut() {
     const user = JSON.parse(JSON.stringify(localStorage.getItem('session')));
     localStorage.removeItem('session');
 
@@ -87,7 +87,7 @@ export class AuthService {
     return userObservable;
   }
 
-  createUser(user: User) {
+  static createUser(user: User) {
     const users: User[] = JSON.parse(
       JSON.stringify(localStorage.getItem('users'))
     );
@@ -100,5 +100,45 @@ export class AuthService {
     });
 
     return userObservable;
+  }
+
+  static updateUser(
+    dui: number,
+    email: string,
+    newDui: string
+  ): Observable<User> {
+    const users: User[] = JSON.parse(
+      JSON.stringify(localStorage.getItem('users'))
+    );
+
+    const userData = users.find((user) => user.dui === dui) as User;
+    const userUpdated = { ...userData, dui: newDui, email };
+
+    const newUsers = users.map((user) =>
+      user.dui === userData.dui ? userUpdated : user
+    );
+
+    const userObservable: Observable<User> = new Observable((subscribe) => {
+      subscribe.next(userData);
+
+      localStorage.setItem('users', JSON.stringify(newUsers));
+    });
+
+    return userObservable;
+  }
+
+  static deleteUser(dui: number) {
+    const users: User[] = JSON.parse(
+      JSON.stringify(localStorage.getItem('users'))
+    );
+
+    const newUsers: User[] = users.filter((user) => user.dui !== dui);
+
+    const usersObservable = new Observable((subscribe) => {
+      subscribe.next(newUsers);
+      localStorage.setItem('users', JSON.stringify(newUsers));
+    });
+
+    return usersObservable;
   }
 }
