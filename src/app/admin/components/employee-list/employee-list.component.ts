@@ -41,7 +41,9 @@ export class EmployeeListComponent implements OnInit {
   }
 
   logOut() {
-    this.authService.logOut().subscribe((data) => console.log(data));
+    this.authService.logOut().subscribe((data) => {
+      this.router.navigate(['auth/login']);
+    });
   }
 
   deleteEmployee(dui: string) {
