@@ -9,23 +9,23 @@ export class EmployeesService {
   constructor() {}
 
   getAllEmployees(): Observable<Employee[]> {
-    const employees = JSON.parse(
-      JSON.stringify(localStorage.getItem('employees'))
-    );
+    const employeesLocalStorage = localStorage.getItem('employees') as string;
 
-    if (!employees) {
-      return throwError(() => {
-        const error: any = new Error('Not employees');
-        error.describe = {
-          status: 400,
-          message: 'Not Employees',
-        };
+    const employees = JSON.parse(employeesLocalStorage);
 
-        return error;
-      });
-    }
+    const employeesObservable = new Observable((subscribe) => {
+      if (!employees) {
+        subscribe.error(
+          throwError(() => {
+            const error: any = new Error('Not employees found');
 
-    return employees as Observable<Employee[]>;
+            return error;
+          })
+        );
+        return;
+      } else subscribe.next(employees);
+    });
+    return employeesObservable as Observable<Employee[]>;
   }
 
   getEmployeeById(dui: number): Observable<Employee> {
@@ -37,19 +37,20 @@ export class EmployeesService {
       ? employees.find((employee) => employee.dui === dui)
       : null;
 
-    if (!employee) {
-      return throwError(() => {
-        const error: any = new Error('Employee not found');
-        error.describe = {
-          status: 400,
-          message: 'Employee not found',
-        };
+    const employeeObservable = new Observable<Employee>((subscribe) => {
+      if (!employee) {
+        subscribe.error(
+          throwError(() => {
+            const error: any = new Error('Employee not found');
+            return error;
+          })
+        );
 
-        return error;
-      });
-    }
+        return;
+      } else subscribe.next(employee);
+    });
 
-    return employee as Observable<Employee>;
+    return employeeObservable;
   }
 
   updateEmployee(newEmployee: Employee) {
@@ -79,29 +80,33 @@ export class EmployeesService {
   }
 
   deleteEmployee(dui: number): Observable<Employee[]> {
-    const employees: Employee[] = JSON.parse(
-      JSON.stringify(localStorage.getItem('employees'))
-    );
+    const employeesLocalStorage = localStorage.getItem('employees') as string;
+
+    const employees: Employee[] = JSON.parse(employeesLocalStorage);
 
     if (!employees) {
-      return throwError(() => {
-        const error: any = new Error('Not employees to delete');
-        error.describe = {
-          status: 400,
-          message: 'Not employees to delete',
-        };
-
-        return error;
-      });
     }
 
-    const newEmployees = (
-      employees ? employees.filter((employee) => employee.dui === dui) : null
-    ) as unknown;
+    const newEmployees = employees.filter((employee) => employee.dui !== dui);
 
-    localStorage.setItem('employees', JSON.stringify(newEmployees));
+    const employeesOptions = new Observable<Employee[]>((subscribe) => {
+      if (!employees) {
+        subscribe.error(
+          throwError(() => {
+            const error: any = new Error('users not found');
 
-    return newEmployees as Observable<Employee[]>;
+            return error;
+          })
+        );
+
+        return;
+      } else {
+        subscribe.next(newEmployees);
+        localStorage.setItem('employees', JSON.stringify(newEmployees));
+      }
+    });
+
+    return employeesOptions;
   }
 
   createEmployees(employee: Employee): Observable<Employee> {

@@ -7,13 +7,16 @@
     <button mat-raised-button color="accent" (click)="addEmployee()">
       Agregar
     </button>
-    <button mat-raised-button color="warn">Cerrar sesion</button>
+    <button mat-raised-button color="warn" (click)="logOut()">
+      Cerrar sesion
+    </button>
   </div>
 
   <div class="employee_container">
     <app-employee-items
       *ngFor="let employee of employees"
       [employee]="employee"
+      (deleteEmployee)="deleteEmployee($event)"
     ></app-employee-items>
   </div>
 </div>

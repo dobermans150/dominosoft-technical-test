@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Employee } from '@core/models/employee.model';
+import { EmployeesService } from '@core/services/employees.service';
+import { catchError } from 'rxjs';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-employee-list',
@@ -8,42 +11,45 @@ import { Employee } from '@core/models/employee.model';
   styleUrls: ['./employee-list.component.css'],
 })
 export class EmployeeListComponent implements OnInit {
-  employees: Employee[] = [
-    {
-      uuid: '8c9bfa6f-bd70-498a-b832-346d92884f84',
-      dui: 123,
-      names: 'Christian',
-      lastnames: 'Guevara',
-      email: 'Christian@email.com',
-    },
-    {
-      uuid: '8c9bfa6f-bd70-498a-b832-346d92884f84',
-      dui: 1234,
-      names: 'Christian',
-      lastnames: 'Guevara',
-      email: 'Christian@email.com',
-    },
-    {
-      uuid: '8c9bfa6f-bd70-498a-b832-346d92884f84',
-      dui: 4321,
-      names: 'Christian',
-      lastnames: 'Guevara',
-      email: 'Christian@email.com',
-    },
-    {
-      uuid: '8c9bfa6f-bd70-498a-b832-346d92884f84',
-      dui: 555,
-      names: 'Christian',
-      lastnames: 'Guevara',
-      email: 'Christian@email.com',
-    },
-  ];
+  employees: Employee[] = [];
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private employeesService: EmployeesService,
+    private authService: AuthService
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getEmployees();
+  }
 
+  getEmployees() {
+    this.employeesService
+      .getAllEmployees()
+      .pipe(
+        catchError((error) => {
+          console.log(error);
+          return [];
+        })
+      )
+      .subscribe((employees) => {
+        this.employees = employees;
+      });
+  }
   addEmployee() {
     this.router.navigate(['/admin/create']);
+  }
+
+  logOut() {
+    this.authService.logOut().subscribe((data) => console.log(data));
+  }
+
+  deleteEmployee(dui: string) {
+    const employeeDui = parseInt(dui);
+
+    this.employeesService
+      .deleteEmployee(employeeDui)
+      .subscribe((employee) => {});
+    this.getEmployees();
   }
 }
